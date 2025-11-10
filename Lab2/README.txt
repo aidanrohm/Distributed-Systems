@@ -86,7 +86,7 @@ Step 4: Test 3 - Two Competing Proposers (B wins)
 		# This can be used to dictate how quickly node-0 actually executes. 
 		# Simulating a delay in communication between the client and the server itself.
 		import time
-		time.sleep(3)
+		time.sleep(random.uniform(0, 2))
 	It is expected that the second proposer (coming from node-1) sends a higher proposal number. Because of this, the cluster should adopt
 	B's value as the final chosen one, and output from each of the nodes should reflect this.
 
