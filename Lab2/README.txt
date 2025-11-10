@@ -54,3 +54,52 @@ Then, update the NODE_ID that corresponds to the machine that you are configurin
 	Node-0		1
 	Node-1		2
 	Node-2		3
+
+RUNNING THE SIMULATION:
+
+Step 1: Start the Paxos Servers-
+	Run the following command on each node in separate SSH windows:
+		python3 paxos-server-test.py
+	The terminal will appear to hang, but this is simply because there is no output coming from the server code.
+	All servers are now listening for RPC connections and are ready to form the Paxos cluster.
+
+Step 2: Test 1 - Single Proposer
+	From any node (in a new SSH window) run the client code using the command:
+		python3 paxos-client-test.py
+	Expected Output:
+		"SubmitValue SUCCEEDED. Chosen value = Hello from clientA
+		Current value on this node: Hello from clientA"
+	This is an indication that all three nodes have agreed on the same chosen value
+
+Step 3: Test 2 - Two Competing Proposers (A wins)
+	On node-0 run the command:
+		python3 paxos-client-test.py
+	Quickly run the same command on node-1:
+		python3 paxos-client-test.py
+	(remember to do this in separate windows from the server code, this way it does not interfere)
+	It is expected that both proposers attempt to initiate consensus simulatneously.
+	One of them (A) will win, and all nodes will agree on "Hello from clientA," including the losing proposer.
+
+Step 4: Test 3 - Two Competing Proposers (B wins)
+	Repeat the previous test but client B should be run slightly earlier. This can be done by introducing a delay in node-0's script.
+	Example Adjustment to node-0's client:
+		# This can be used to dictate how quickly node-0 actually executes. 
+		# Simulating a delay in communication between the client and the server itself.
+		import time
+		time.sleep(3)
+	It is expected that the second proposer (coming from node-1) sends a higher proposal number. Because of this, the cluster should adopt
+	B's value as the final chosen one, and output from each of the nodes should reflect this.
+
+Step 5: Verifying Consensus
+	On each node, run the command:
+		cat CISC5597
+	All files should contian the same chosen value after each test.
+
+RESETTING BETWEEN TESTS
+
+To clear the old state in between tests, the following can be run:
+	(ctrl) + c 
+	rm -f CISC5597
+This will quit the server process and clear the file from the working directory, allowing us to start fresh for a new test
+
+
