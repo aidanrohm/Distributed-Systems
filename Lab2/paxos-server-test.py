@@ -24,21 +24,18 @@ class RPCHandler:
                     r = self._functions[func_name](*args, **kwargs)
                     connection.send(pickle.dumps(r))
                 except Exception as e:
-                    # Send exceptions back so the client can raise them
                     connection.send(pickle.dumps(e))
         except EOFError:
-            # Client closed the connection
             pass
 
-# ---------- Paxos + file replication state ----------
-
+# Server Nodes 
 # Adjust these constants for each node in your cluster.
 # Example:
 #   Node 1: NODE_ID = 1, NODE_INDEX = 0
 #   Node 2: NODE_ID = 2, NODE_INDEX = 1
 #   Node 3: NODE_ID = 3, NODE_INDEX = 2
 
-NODE_ID = 3          # <- CHANGE per node (1, 2, or 3)
+NODE_ID = 3          # CHANGE per node (1, 2, or 3)
 NODE_INDEX = NODE_ID - 1
 
 # All three node addresses in the cluster (from Lab-1).
@@ -61,7 +58,7 @@ accepted_value = None    # value associated with accepted_n
 # Local proposal counter for this node (used when acting as proposer)
 proposal_counter = 0
 
-
+#File Creation
 def _init_file():
     """Ensure the replicated file exists."""
     if not os.path.exists(FILE_NAME):
@@ -71,7 +68,7 @@ def _init_file():
 
 _init_file()
 
-
+#File write
 def _write_file(value):
     """Write the chosen value into this node's local replica."""
     with open(FILE_NAME, "w") as f:
@@ -124,7 +121,7 @@ def _call_remote(addr, func_name, *args, **kwargs):
     finally:
         c.close()
 
-# ---------- Paxos RPCs: prepare & accept ----------
+# Paxos RPCs: prepare & accept
 
 def prepare(n):
     """
@@ -158,7 +155,7 @@ def accept(n, v):
     else:
         return ("reject", promised_n)
 
-# ---------- Client-facing RPC: SubmitValue ----------
+# Client-facing RPC: SubmitValue 
 
 def SubmitValue(value):
     """
@@ -173,7 +170,7 @@ def SubmitValue(value):
 
     n = _next_proposal_number()
 
-    # ----- Phase 1: Prepare -----
+    # Phase 1: Prepare
     promises = []
     highest_accepted_n = None
     highest_accepted_val = None
@@ -208,7 +205,7 @@ def SubmitValue(value):
     else:
         v_to_propose = value
 
-    # ----- Phase 2: Accept -----
+    # Phase 2: Accept
     accepts = 0
 
     # Self
@@ -230,8 +227,7 @@ def SubmitValue(value):
     else:
         return f"SubmitValue FAILED in Phase 2 (only {accepts} accepts)."
 
-# ---------- RPC server bootstrap ----------
-
+# Original RPC server
 def rpc_server(handler, address, authkey):
     sock = Listener(address, authkey=authkey)
     while True:
@@ -240,7 +236,7 @@ def rpc_server(handler, address, authkey):
         t.daemon = True
         t.start()
 
-# Register Paxos-related functions with the RPC handler
+# Register with a handler and additional Paxos-related functions 
 handler = RPCHandler()
 handler.register_function(prepare)
 handler.register_function(accept)
@@ -249,5 +245,4 @@ handler.register_function(get_value)
 
 # Run the server
 if __name__ == "__main__":
-    # Bind locally; other nodes/clients should connect to this node's IP + port 17000
     rpc_server(handler, ('0.0.0.0', 17000), authkey=AUTHKEY)
