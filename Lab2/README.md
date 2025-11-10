@@ -20,9 +20,9 @@ SYSTEM OVERVIEW:
 
 Cluster Configuration - 
 
-Node		Internal IP	External IP		Role				Port
+Node		Internal IP	External IP			Role						Port
 Node-0		10.128.0.2	34.63.196.172		Proposer/Acceptpr/Learner	17000
-Node-1		10.128.0.3	34.9.238.24		Proposer/Acceptpr/Learner	17000
+Node-1		10.128.0.3	34.9.238.24			Proposer/Acceptpr/Learner	17000
 Node-2		10.128.0.5	34.42.170.215		Proposer/Acceptpr/Learner	17000
 
 The internal IPs are used here for internal communication within the cluster itself. The
@@ -47,7 +47,7 @@ running each node
 	ALL_NODES = [
     		('10.128.0.2', 17000),
     		('10.128.0.3', 17000),
-    		('10.128.0.5', 17000)
+			('10.128.0.5', 17000)
 	]
 Then, update the NODE_ID that corresponds to the machine that you are configuring. In our case:
 	Node		NODE_ID
