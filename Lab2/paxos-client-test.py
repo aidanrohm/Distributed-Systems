@@ -17,7 +17,7 @@ class RPCProxy:
 if __name__ == "__main__":
     # Connect this client to one node in the cluster.
     # You can change the IP to 10.128.0.2 / .3 / .5 to test different proposers.
-    c = Client(('34.63.196.172', 17000), authkey=b'peekaboo')
+    c = Client(('10.128.0.2', 17000), authkey=b'peekaboo')
 
     proxy = RPCProxy(c)
 
