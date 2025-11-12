@@ -21,9 +21,9 @@ SYSTEM OVERVIEW:
 Cluster Configuration - 
 
 Node		Internal IP	External IP			Role						Port
-Node-0		10.128.0.2	34.63.196.172		Proposer/Acceptpr/Learner	17000
-Node-1		10.128.0.3	34.9.238.24			Proposer/Acceptpr/Learner	17000
-Node-2		10.128.0.5	34.42.170.215		Proposer/Acceptpr/Learner	17000
+Node-0		10.128.0.2	34.63.196.172		Proposer/Acceptor/Learner	17000
+Node-1		10.128.0.3	34.9.238.24			Proposer/Acceptor/Learner	17000
+Node-2		10.128.0.5	34.42.170.215		Proposer/Acceptor/Learner	17000
 
 The internal IPs are used here for internal communication within the cluster itself. The
 external IPs are used only when trying to connect to the system from a machine outside of the
