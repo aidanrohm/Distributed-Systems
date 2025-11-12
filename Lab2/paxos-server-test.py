@@ -197,7 +197,7 @@ def SubmitValue(value):
                 highest_accepted_val = acc_val
 
     if len(promises) < MAJORITY:
-        return f"SubmitValue FAILED in Phase 1 (only {len(promises)} promises)."
+        return f"Proposal Num: {proposal_counter}, SubmitValue FAILED in Phase 1 (only {len(promises)} promises)."
 
     # If any acceptor has already accepted a value, we must propose that value
     if highest_accepted_val is not None:
@@ -223,9 +223,9 @@ def SubmitValue(value):
             pass
 
     if accepts >= MAJORITY:
-        return f"SubmitValue SUCCEEDED. Chosen value = {v_to_propose}"
+        return f"Proposal Num: {proposal_counter}, SubmitValue SUCCEEDED. Chosen value = {v_to_propose}"
     else:
-        return f"SubmitValue FAILED in Phase 2 (only {accepts} accepts)."
+        return f"Proposal Num: {proposal_counter}, SubmitValue FAILED in Phase 2 (only {accepts} accepts)."
 
 # Original RPC server
 def rpc_server(handler, address, authkey):
