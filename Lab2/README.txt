@@ -61,7 +61,8 @@ Step 1: Start the Paxos Servers-
 	Run the following command on each node in separate SSH windows:
 		python3 paxos-server-test.py
 	The terminal will appear to hang, but this is simply because there is no output coming from the server code.
-	All servers are now listening for RPC connections and are ready to form the Paxos cluster.
+	All servers are now listening for RPC connections and are ready to form the Paxos cluster. There will be text
+	output from the servers that reflect when they are preparing and accepting certain proposals.
 
 Step 2: Test 1 - Single Proposer
 	From any node (in a new SSH window) run the client code using the command:
