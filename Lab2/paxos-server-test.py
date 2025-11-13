@@ -131,10 +131,15 @@ def prepare(n):
       ("reject", promised_n) on failure
     """
     global promised_n, accepted_n, accepted_value
+
     if promised_n is None or n > promised_n:
+        print(f"[Node {NODE_ID}] PREPARE: Promised proposal n={n} "
+              f"(prev promised_n={promised_n}, accepted_n={accepted_n}, value={accepted_value})")
         promised_n = n
         return ("promise", accepted_n, accepted_value)
     else:
+        print(f"[Node {NODE_ID}] PREPARE: Rejected proposal n={n} "
+              f"(already promised_n={promised_n})")
         return ("reject", promised_n)
 
 
@@ -146,14 +151,19 @@ def accept(n, v):
       ("reject", promised_n) on failure
     """
     global promised_n, accepted_n, accepted_value
+
     if promised_n is None or n >= promised_n:
         promised_n = n
         accepted_n = n
         accepted_value = v
         _write_file(v)
+        print(f"[Node {NODE_ID}] ACCEPT: Accepted proposal n={n} with value={v}")
         return ("accepted", n)
     else:
+        print(f"[Node {NODE_ID}] ACCEPT: Rejected proposal n={n} "
+              f"(already promised_n={promised_n})")
         return ("reject", promised_n)
+
 
 # Client-facing RPC: SubmitValue 
 
