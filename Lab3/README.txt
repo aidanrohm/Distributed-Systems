@@ -85,7 +85,7 @@ RUNNING THE SIMULATION:
         On node-2, run:
             python3 participantB.py
         
-        Both of these executions will dile, this is normal as they are waiting for RPC instructions from the coordinator
+        Both of these executions will idle, this is normal as they are waiting for RPC instructions from the coordinator
     
     2. Start the Coordinator:
         SSH into node-0 in a new terminal window, navigate to the Lab3 directory.
