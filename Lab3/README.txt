@@ -132,11 +132,13 @@ RUNNING THE SIMULATION:
         
         Case 1:
             The participant never responds -> the coordinator aborts the transaction.
+            CRASH_BEFORE_VOTE = True
             The logs will show:
                 Exception contacting B during prepare
                 Transaction aborted.
         Case 2:
             The participant votes YES, then dies.
+            CRASH_AFTER_VOTE = True
             The coordinator sends the commit, recovery would be required but the simulation will end here.
 
 VERIFYING THE RESULTS:
