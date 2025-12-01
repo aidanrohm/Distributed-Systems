@@ -162,7 +162,7 @@ RESETTING BETWEEN TESTS:
 
     This is only really necessary when doing the two tests, where the timeouts are activated to simulate failures.
 
-    Stio each running server using:
+    Stop each running server using:
         CTRL + C
 
     On node-1, run:
