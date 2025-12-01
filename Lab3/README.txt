@@ -126,11 +126,10 @@ RUNNING THE SIMULATION:
             "Final balances after Scenario 1.b: {'A': 108, 'B': 68}
     
     5. Failure Scenario Testing
-        Failure behavior is triggered by editing:
+        Failure behavior is triggered by editing inside of participantB.py:
             CRASH_BEFORE_VOTE = False (change to True)
             CRASH_AFTER_VOTE = False (change to True)
-        inside of participantB.py
-
+        
         Case 1:
             The participant never responds -> the coordinator aborts the transaction.
             The logs will show:
