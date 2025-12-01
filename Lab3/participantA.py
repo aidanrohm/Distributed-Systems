@@ -65,6 +65,7 @@ class AccountParticipant:
             f.write(str(value) + "\n")
 
     # ---------- RPC methods ----------
+    
     def get_balance(self):
         """Thread safe read of the account balance."""
         with self.lock:
