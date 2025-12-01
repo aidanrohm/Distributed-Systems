@@ -18,32 +18,35 @@ import os
 HOST = "10.128.0.3"   # node-1 internal IP
 PORT = 8001
 
-ACCOUNT_NAME = "A"
-ACCOUNT_FILE = "account_A.txt"
-LOG_FILE = "log_node1_A.txt"
+
+ACCOUNT_NAME = "A"                # The name used in logs
+ACCOUNT_FILE = "account_A.txt"    # Stores a balance as a single integer
+LOG_FILE = "log_node1_A.txt"      # Log file
 
 # Crash simulation flags for requirement 1.c
-CRASH_BEFORE_VOTE = False
-CRASH_AFTER_VOTE = False
+CRASH_BEFORE_VOTE = False    # Set to True to simulate a crash before the participants vote
+CRASH_AFTER_VOTE = False     # Set to True to simulate a crash after the participants vote, but before they commit
+
 
 class AccountParticipant:
     def __init__(self, account_name, account_file, log_file):
         self.account_name = account_name
         self.account_file = account_file
         self.log_file = log_file
-        
         self.prepared_transactions = {}
-        self.lock = threading.Lock()
-        self._ensure_account_file()
+        self.lock = threading.Lock()        # Only one thread at a time can read/write balances
+        self._ensure_account_file()         # Create account file if it doesn't exist
 
     # ---------- Internal helpers ----------
-
+    
     def _ensure_account_file(self):
         """Create the file if it doesn't exist, defaulting to 0."""
         if not os.path.exists(self.account_file):
             with open(self.account_file, "w") as f:
                 f.write("0\n")
 
+    # Logs a timestamped message prefixed with [A]
+    # Prints to the console and appends to the log_node1_A.txt file
     def _log(self, msg):
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         line = f"[{timestamp}] [{self.account_name}] {msg}"
@@ -52,23 +55,28 @@ class AccountParticipant:
             f.write(line + "\n")
 
     def _read_balance(self):
+        """Reads the current balance from the account file."""
         with open(self.account_file, "r") as f:
             return int(f.read().strip())
 
     def _write_balance(self, value):
+        """Overwrites the file with the new balance from the commits."""
         with open(self.account_file, "w") as f:
             f.write(str(value) + "\n")
 
     # ---------- RPC methods ----------
-
     def get_balance(self):
+        """Thread safe read of the account balance."""
         with self.lock:
             bal = self._read_balance()
             self._log(f"get_balance -> {bal}")
             return bal
 
     def set_balance(self, new_value):
-        """Helper to initialize scenarios (200/300 or 90/50)."""
+        """
+        Helper to initialize scenarios (200/300 or 90/50).
+        Based on the assignment description.
+        """
         with self.lock:
             self._write_balance(int(new_value))
             self._log(f"set_balance({new_value})")
@@ -80,6 +88,7 @@ class AccountParticipant:
         tx_type: 'T1_TRANSFER_100' or 'T2_BONUS'
         params: dictionary, e.g. {'bonus': 40}
         Return True for YES, False for NO.
+        Called by the Coordinator
         """
         with self.lock:
             self._log(f"PREPARE received: tx_id={transaction_id}, type={tx_type}, params={params}")
@@ -96,17 +105,17 @@ class AccountParticipant:
                 # For account A: subtract 100, but only there is enough
                 if current_balance < 100:
                     self._log(f"VOTE ABORT (insufficient funds: {current_balance})")
-                    return False
+                    return False    # To vote "no"
                 new_balance = current_balance - 100
 
             elif tx_type == "T2_BONUS":
-                # Add bonus to A (same bonus as B) – coordinator provides the bonus value
+                # Add bonus to A (same bonus as B). Coordinator provides the bonus value
                 bonus = int(params.get("bonus", 0))
                 new_balance = current_balance + bonus
 
             else:
                 self._log(f"Unknown tx_type={tx_type}, VOTE ABORT")
-                return False
+                return False    # To vote "np"
 
             # Record prepared new balance (but DO NOT write to account file yet)
             self.prepared_transactions[transaction_id] = new_balance
@@ -118,7 +127,7 @@ class AccountParticipant:
                 while True:
                     time.sleep(1000)
 
-            return True
+            return True    # To vote "yes"
 
     def commit(self, transaction_id):
         """Phase 2 COMMIT: finalize the prepared value."""
@@ -145,9 +154,12 @@ class AccountParticipant:
         return True
 
 def main():
+    # Create the server bound to the HOST and PORT
     server = SimpleXMLRPCServer((HOST, PORT), allow_none=True, logRequests=True)
     participant = AccountParticipant(ACCOUNT_NAME, ACCOUNT_FILE, LOG_FILE)
-    server.register_instance(participant)
+    server.register_instance(participant)    # Methods become XML-RPC endpoints
+    
+    # Startup message and looping
     print(f"Node1 (Account {ACCOUNT_NAME}) listening on {HOST}:{PORT} ...")
     server.serve_forever()
 
