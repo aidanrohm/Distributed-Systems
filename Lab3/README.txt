@@ -55,15 +55,15 @@ NODE CONFIGURATION:
     Before running the system, ensure the following IP bindings are correct inside each file.
     REMINDER: They must match the configuration of your cluster in order for it to work.
 
-    1. node-0 (Coordinator)
+    1. node-0 (Coordinator: coordinator.py)
         HOST = "10.128.0.2"
         NODE1_URL = "http://10.128.0.3:8001/"
         NODE2_URL = "http://10.128.0.5:8002/"
         PORT = 8000
-    2. node-1 (Participant A)
+    2. node-1 (Participant A: participantA.py)
         HOST = "10.128.0.3"
         PORT = 8001
-    3. node-2 (Particpant B)
+    3. node-2 (Particpant B: participantB.py)
         HOST = "10.128.0.5"
         PORT = "8002"
     
